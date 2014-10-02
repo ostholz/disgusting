@@ -1,5 +1,6 @@
 class NoisesController < ApplicationController
-  before_action :set_noise, only: [:show, :edit, :update, :destroy]
+  skip_before_filter :require_login, only: :ws_all
+  # before_action :set_noise, only: [:show, :edit, :update, :destroy]
 
   # GET /noises
   # GET /noises.json
@@ -15,8 +16,12 @@ class NoisesController < ApplicationController
         render json: Noise.all.select('id, name, icon') 
       end
     end
-    
   end
+
+  def ws_all
+    render json: Noise.all.select('id, name, icon')
+  end
+
 
   # GET /noises/1
   # GET /noises/1.json

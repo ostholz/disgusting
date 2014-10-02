@@ -2,7 +2,11 @@ DisgustingServer::Application.routes.draw do
 
   root 'noises#index'
 
-  resources :noises
+  resources :noises do
+    collection do
+      get 'all', to: 'noises#ws_all', as: 'ws_all'
+    end
+  end
 
   match 'login', to: 'users#login', via: ['get', 'post']
   get 'logout', to: 'users#logout', as: 'logout'
