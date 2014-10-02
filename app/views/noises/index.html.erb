@@ -1,0 +1,74 @@
+<%= link_to('logout', logout_path, {class: 'btn-sm btn-warning pull-right', style: 'margin-top: 1em;'}) %>
+<h1 class="text-center">Disgustingnoises</h1>
+<br>
+
+<div class="bg-info" style="margin-bottom: 50px; padding: 15px 0; overflow: auto;">
+  <%= form_for(@noise, {role: 'form', class: 'form-horizontal'}) do |f| %>
+
+    <div class="form-group">
+      <%= f.label :name, 'Sound', {class: 'col-sm-2 control-label'} %>
+      <%= f.file_field :name %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :icon, {class: 'col-sm-2 control-label'} %>
+      <%= f.file_field :icon %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, {class: 'col-sm-2 control-label'} %>
+      <%= f.text_field :description %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :tag, {class: 'col-sm-2 control-label'} %>
+      <%= f.text_field :tag %>
+    </div>
+
+    <% if @noise.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@noise.errors.count, "error") %> prohibited this noise from being saved:</h2>
+
+        <ul>
+        <% @noise.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="actions" style="float: right; margin-right: 10px;">
+      <%= f.submit 'hochladen', {class: 'btn btn-primary'} %>
+    </div>
+  <% end %>
+
+</div>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Icon</th>
+      <th>Beschreibung</th>
+      <th>Tag</th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @noises.each do |noise| %>
+      <tr>
+        <td><%= link_to(noise.name, audio_path(noise.name)) %> </td>
+        <td><%= image_tag(noise.icon, size: '80x80') %> </td>
+        <td><%= noise.description %></td>
+        <td><%= noise.tag %></td>
+        <td><%= link_to 'löschen', noise, method: :delete, data: { confirm: 'Bist du sicher?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<br>
+<%= will_paginate @noises %>
+

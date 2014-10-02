@@ -1,0 +1,29 @@
+<% unless flash.now[:error].nil?  %>
+  <div class="alert alert-danger">
+    <%= flash.now[:error] %>
+  </div>
+<% end %>
+
+<% unless flash.now[:notice].nil?  %>
+<div class="alert alert-success">
+<%= flash.now[:notice] %>
+</div>
+<% end %>
+
+<% unless flash.now[:alert].nil?  %>
+  <div class="alert alert-warning">
+    <%= flash.now[:alert] %>
+  </div>
+<% end %>
+
+<% if defined? model %>
+    <% unless model.nil? %>
+      <% if model.errors.full_messages.any? %>
+        <div class="alert alert-danger">
+          <% model.errors.full_messages.each do |error_message| %>
+            <%= error_message %> <br />
+          <% end %>
+        </div>
+      <% end %>
+    <%end %>
+<%end %>
