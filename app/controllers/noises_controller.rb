@@ -1,5 +1,5 @@
 class NoisesController < ApplicationController
-  skip_before_filter :require_login, only: :ws_all
+  skip_before_filter :require_login, only: [:ws_all, :audio_file]
   # before_action :set_noise, only: [:show, :edit, :update, :destroy]
 
   # GET /noises
