@@ -39,29 +39,47 @@ class NoisesController < ApplicationController
 
   # POST /noises
   # POST /noises.json
-  def create
+  def create 
     # @noise = Noise.new(noise_params)
     icon_dir = 'app/assets/images/'
     audio_dir = 'public/audios/'
     #origin filenames
-    noise_name_o = params[:noise][:name].original_filename
     noise_icon_o = params[:noise][:icon].original_filename
+    noise_names_o = params[:noise][:name]
 
     time_as_filename = Time.now.strftime('%Y%d%m%M%S')
 
-    # Target names
-    noise_name_t = time_as_filename + File.extname(noise_name_o)
+    # save icon
     noise_icon_t = time_as_filename + File.extname(noise_icon_o)
-
-    # save into directory
-    audio_path = File.join(Rails.root, audio_dir, noise_name_t)
     icon_path = File.join(Rails.root, icon_dir, noise_icon_t)
-
-    File.open(audio_path, 'wb') { |f| f.write(params[:noise][:name].read)}
     File.open( icon_path, 'wb') { |f| f.write(params[:noise][:icon].read)}
 
+    audio_files_name = []
+    audio_file_name = nil
+    # Target names
+    if noise_name_o.class == Array 
+      noise_name_o.each_with_index { |nn, idx| 
+        ext_name = File.extname(nn.original_filename)
+        noise_name_t = time_as_filename + '_' + idx.to_s + ext_name
+        audio_path = File.join(Rails.root, audio_dir, noise_name_t)
+        File.open(audio_path, 'wb') { |f| f.write(params[:noise][:name].read)}
+        audio_files_name << noise_name_t
+      }
+    else
+      noise_name_t = time_as_filename + File.extname(noise_name_o)
+      audio_path = File.join(Rails.root, audio_dir, noise_name_t)
+      File.open(audio_path, 'wb') { |f| f.write(params[:noise][:name].read)}
+      audio_file_name = noise_name_t
+    end
+
+    # save into directory
+
     @noise = Noise.new
-    @noise.name = noise_name_t
+    if noise_name_o.class == Array
+      @noise.name = audio_files_name.to_s
+    else
+      @noise.name = audio_file_name
+    end
     @noise.icon = noise_icon_t
     @noise.tag = params[:tag]
     @noise.description = params[:description]
