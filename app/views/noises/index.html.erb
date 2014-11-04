@@ -58,7 +58,10 @@
   <tbody>
     <% @noises.each do |noise| %>
       <tr>
-        <td><%= link_to(noise.name, audio_path(noise.name)) %> </td>
+        <td> <% noise.sounds.each do |sound| %>
+          <%= link_to(sound, audio_path(sound), {id: sound, class: 'sound'}) %> <br>
+          <% end %>
+        </td>
         <td><%= image_tag(noise.icon, size: '80x80') %> </td>
         <td><%= noise.description %></td>
         <td><%= noise.tag %></td>

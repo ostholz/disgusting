@@ -13,13 +13,13 @@ class NoisesController < ApplicationController
       format.html { @noises = Noise.paginate(per_page: 20, page: params[:page]) }
       format.json do 
         list = @noises.map
-        render json: Noise.all.select('id, name, icon') 
+        render json: Noise.all.select('id, sounds, icon') 
       end
     end
   end
 
   def ws_all
-    render json: Noise.all.select('id, name, icon')
+    render json: Noise.all.select('id, sounds, icon')
   end
 
 
@@ -46,7 +46,6 @@ class NoisesController < ApplicationController
     #origin filenames
     noise_icon_o = params[:noise][:icon].original_filename
     noise_names_o = params[:noise][:name]
-
     time_as_filename = Time.now.strftime('%Y%d%m%M%S')
 
     # save icon
@@ -54,32 +53,25 @@ class NoisesController < ApplicationController
     icon_path = File.join(Rails.root, icon_dir, noise_icon_t)
     File.open( icon_path, 'wb') { |f| f.write(params[:noise][:icon].read)}
 
-    audio_files_name = []
-    audio_file_name = nil
+    sounds = []
     # Target names
-    if noise_name_o.class == Array 
-      noise_name_o.each_with_index { |nn, idx| 
+    if noise_names_o.class == Array 
+      noise_names_o.each_with_index { |nn, idx| 
         ext_name = File.extname(nn.original_filename)
         noise_name_t = time_as_filename + '_' + idx.to_s + ext_name
         audio_path = File.join(Rails.root, audio_dir, noise_name_t)
-        File.open(audio_path, 'wb') { |f| f.write(params[:noise][:name].read)}
-        audio_files_name << noise_name_t
+        File.open(audio_path, 'wb') { |f| f.write(nn.read)}
+        sounds << noise_name_t
       }
     else
-      noise_name_t = time_as_filename + File.extname(noise_name_o)
+      noise_name_t = time_as_filename + File.extname(noise_names_o)
       audio_path = File.join(Rails.root, audio_dir, noise_name_t)
       File.open(audio_path, 'wb') { |f| f.write(params[:noise][:name].read)}
-      audio_file_name = noise_name_t
+      sounds << noise_name_t
     end
-
-    # save into directory
 
     @noise = Noise.new
-    if noise_name_o.class == Array
-      @noise.name = audio_files_name.to_s
-    else
-      @noise.name = audio_file_name
-    end
+    @noise.sounds = sounds
     @noise.icon = noise_icon_t
     @noise.tag = params[:tag]
     @noise.description = params[:description]

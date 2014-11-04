@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 20141002122420) do
 
   create_table "noises", force: true do |t|
     t.string   "name"
+    t.string   "sounds"
     t.string   "icon"
     t.string   "tag"
     t.string   "description"
